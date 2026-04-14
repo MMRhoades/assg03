@@ -88,7 +88,21 @@ void mem_write(uint16_t address, uint16_t value)
  *    bit positions, thus converting this to a full 16-bit twos-complement sigend
  *    value.
  */
-// put your implememtation of sign_extend() here below it documentation
+uint16_t sign_extend(uint16_t bits, int sign_position)
+{
+  if ((bits >> (sign_position - 1)) & 1)
+  {
+    // sign bit is 1, need to extend with 1's
+    uint16_t mask = 0xFFFF << sign_position;
+    return bits | mask;
+  }
+  else
+  {
+    // sign bit is 0, need to extend with 0's
+    uint16_t mask = 0xFFFF >> (16 - sign_position);
+    return bits & mask;
+  }
+}
 
 /** @brief update condition register flags
  *

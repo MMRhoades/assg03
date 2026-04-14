@@ -81,6 +81,8 @@ void ld_img(char* fname, uint16_t offset);
 
 uint16_t mem_read(uint16_t address);
 void mem_write(uint16_t address, uint16_t value);
+uint16_t sign_extend(uint16_t x, int bit_count);
+
 
 #ifdef TEST
 } // end extern C for C++ test runner
