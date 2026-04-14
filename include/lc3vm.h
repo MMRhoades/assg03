@@ -24,6 +24,17 @@
 #define FL(i) (((i) >> 11) & 1)
 #define TRP(i) ((i) & 0xFF)
 
+#define OPC(i) ((i) >> 12)
+
+#define SR2(i) ((i) & 0x7)
+#define SR1(i) (((i) >> 6) & 0x7)
+#define DR(i) (((i) >> 9) & 0x7)
+
+#define SEXTIMM(i) ((i) & 0x1F) | (((i) & 0x10) ? 0xFFE0 : 0x0)
+#define OFF6(i) ((i) & 0x3F) | (((i) & 0x20) ? 0xFFC0 : 0x0)
+#define PCOFF9(i) ((i) & 0x1FF) | (((i) & 0x100) ? 0xFE00 : 0x0)
+#define PCOFF11(i) ((i) & 0x7FF) | (((i) & 0x400) ? 0xF800 : 0x0)
+
 typedef void (*op_ex_f)(uint16_t i);
 typedef void (*trp_ex_f)();
 
@@ -82,7 +93,6 @@ void ld_img(char* fname, uint16_t offset);
 uint16_t mem_read(uint16_t address);
 void mem_write(uint16_t address, uint16_t value);
 uint16_t sign_extend(uint16_t x, int bit_count);
-
 
 #ifdef TEST
 } // end extern C for C++ test runner
