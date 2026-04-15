@@ -257,7 +257,16 @@ void notlc(uint16_t i)
  *   destination and source register operands, and to extract the
  *   second source register or the immediate value encoded in the
  */
-// put your implememtation of ld() here below it documentation
+void ld(uint16_t i)
+{
+  uint16_t dr = DR(i);
+  uint16_t pcoff9 = PCOFF9(i);
+
+  // calculate address from current RPC and pcoff9 offset, load value from memory at this address into dr
+  reg[dr] = mem_read(reg[RPC] + pcoff9);
+
+  update_flags(dr);
+}
 
 /** @brief load indirect
  *
@@ -274,7 +283,17 @@ void notlc(uint16_t i)
  *   destination and source register operands, and to extract the
  *   second source register or the immediate value encoded in the
  */
-// put your implememtation of ldi() here below it documentation
+void ldi(uint16_t i)
+{
+  uint16_t dr = DR(i);
+  uint16_t pcoff9 = PCOFF9(i);
+
+  // calculate address from current RPC and pcoff9 offset, load value from memory at this address, interpret as another address, load value
+  // from this second address into dr
+  reg[dr] = mem_read(mem_read(reg[RPC] + pcoff9));
+
+  update_flags(dr);
+}
 
 /** @brief load base + relative offset
  *
@@ -290,7 +309,17 @@ void notlc(uint16_t i)
  *   destination and source register operands, and to extract the
  *   second source register or the immediate value encoded in the
  */
-// put your implememtation of ldr() here below it documentation
+void ldr(uint16_t i)
+{
+  uint16_t dr = DR(i);
+  uint16_t sr1 = SR1(i);
+  uint16_t offset6 = OFF6(i);
+
+  // calculate address from sr1 and offset6, load value from memory at this address into dr
+  reg[dr] = mem_read(reg[sr1] + offset6);
+
+  update_flags(dr);
+}
 
 /** @brief load effective address
  *
@@ -307,7 +336,16 @@ void notlc(uint16_t i)
  *   destination and source register operands, and to extract the
  *   second source register or the immediate value encoded in the
  */
-// put your implememtation of lea() here below it documentation
+void lea(uint16_t i)
+{
+  uint16_t dr = DR(i);
+  uint16_t pcoff9 = PCOFF9(i);
+
+  // calculate effective address from current RPC and pcoff9 offset, save result in dr
+  reg[dr] = reg[RPC] + pcoff9;
+
+  update_flags(dr);
+}
 
 /** @brief store to PC + offset
  *
