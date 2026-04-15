@@ -94,6 +94,9 @@ uint16_t mem_read(uint16_t address);
 void mem_write(uint16_t address, uint16_t value);
 uint16_t sign_extend(uint16_t x, int bit_count);
 void update_flags(uint16_t r);
+void add(uint16_t i);
+void andlc(uint16_t i);
+void notlc(uint16_t i);
 
 #ifdef TEST
 } // end extern C for C++ test runner
