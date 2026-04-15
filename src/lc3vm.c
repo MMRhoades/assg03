@@ -360,7 +360,14 @@ void lea(uint16_t i)
  *   destination and source register operands, and to extract the
  *   second source register or the immediate value encoded in the
  */
-// put your implememtation of st() here below it documentation
+void st(uint16_t i)
+{
+  uint16_t sr = DR(i);
+  uint16_t pcoff9 = PCOFF9(i);
+
+  // calculate address from current RPC and pcoff9 offset, store value from sr into memory at this address
+  mem_write(reg[RPC] + pcoff9, reg[sr]);
+}
 
 /** @brief store indirect
  *
@@ -376,7 +383,15 @@ void lea(uint16_t i)
  *   destination and source register operands, and to extract the
  *   second source register or the immediate value encoded in the
  */
-// put your implememtation of sti() here below it documentation
+void sti(uint16_t i)
+{
+  uint16_t sr = DR(i);
+  uint16_t pcoff9 = PCOFF9(i);
+
+  // calculate address from current RPC and pcoff9 offset, load value from memory at this address, interpret as another address, store value
+  // from sr into memory at this second address
+  mem_write(mem_read(reg[RPC] + pcoff9), reg[sr]);
+}
 
 /** @brief store offset relative to base address
  *
@@ -390,8 +405,21 @@ void lea(uint16_t i)
  *   executing.  We need all of the bits so that we can extract the
  *   destination and source register operands, and to extract the
  *   second source register or the immediate value encoded in the
+ *
+ * Again the str parallels the ldr. There is a base register and a 6 bit PCOFF9 in the instruction. These values are combined to give an
+address. The value in the source register is then written to this address.
+
+None of the store routines cause the status flags to change, so you will not be calling update_flags() for any of these routines.
  */
-// put your implememtation of str() here below it documentation
+void str(uint16_t i)
+{
+  uint16_t sr = DR(i);
+  uint16_t base_r = SR1(i);
+  uint16_t offset6 = OFF6(i);
+
+  // calculate address from base_r and offset6, store value from sr into memory at this address
+  mem_write(reg[base_r] + offset6, reg[sr]);
+}
 
 /** @brief jump unconditionally
  *
