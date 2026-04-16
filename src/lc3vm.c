@@ -405,11 +405,6 @@ void sti(uint16_t i)
  *   executing.  We need all of the bits so that we can extract the
  *   destination and source register operands, and to extract the
  *   second source register or the immediate value encoded in the
- *
- * Again the str parallels the ldr. There is a base register and a 6 bit PCOFF9 in the instruction. These values are combined to give an
-address. The value in the source register is then written to this address.
-
-None of the store routines cause the status flags to change, so you will not be calling update_flags() for any of these routines.
  */
 void str(uint16_t i)
 {
@@ -432,7 +427,11 @@ void str(uint16_t i)
  *   destination and source register operands, and to extract the
  *   second source register or the immediate value encoded in the
  */
-// put your implememtation of jmp() here below its documentation
+void jmp(uint16_t i)
+{
+  uint16_t base_r = SR1(i);
+  reg[RPC] = reg[base_r];
+}
 
 /** @brief conditional branch
  *
@@ -450,7 +449,19 @@ void str(uint16_t i)
  *   destination and source register operands, and to extract the
  *   second source register or the immediate value encoded in the
  */
-// put your implememtation of br() here below its documentation
+void br(uint16_t i)
+{
+  uint16_t n = (i >> 11) & 1;
+  uint16_t z = (i >> 10) & 1;
+  uint16_t p = (i >> 9) & 1;
+  uint16_t pcoff9 = PCOFF9(i);
+
+  // check if we should branch based on current condition flags and n,z,p bits, if so calculate new RPC from current RPC and pcoff9 offset
+  if ((n && (reg[RCND] & FN)) || (z && (reg[RCND] & FZ)) || (p && (reg[RCND] & FP)))
+  {
+    reg[RPC] += pcoff9;
+  }
+}
 
 /** @brief jump to/from subtroutine
  *
@@ -463,7 +474,23 @@ void str(uint16_t i)
  *   destination and source register operands, and to extract the
  *   second source register or the immediate value encoded in the
  */
-// put your implememtation of jsr() here below its documentation
+void jsr(uint16_t i)
+{
+  uint16_t pcoff11 = PCOFF11(i);
+
+  // save current RPC in R7
+  reg[R7] = reg[RPC];
+
+  // check if bit 11 is set, if so jump to subroutine using pcoff11 offset, otherwise return from subroutine using base register in bits 8-6
+  if (FL(i))
+  {
+    reg[RPC] = reg[RPC] + pcoff11;
+  }
+  else
+  {
+    reg[RPC] = reg[SR1(i)];
+  }
+}
 
 /** @brief return from interrupt
  *
